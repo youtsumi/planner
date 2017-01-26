@@ -25,7 +25,7 @@ def init( path ):
 	for sql in [
 	    "create table candidates (galid, eventid, prob, inserted datetime);",
 	    "create table galaxies (galid unique, ra, dec);",
-	    "create table observation (galid, eventid, obsid, state, updated datetime);",
+	    "create table observation (galid, eventid, obsid, state, updated datetime, filter, depth );",
 	    "create table events (eventid, inserted datetime, state);",
 	    "create table observatories (obsid unique, password);"
 	    ]:
@@ -70,7 +70,13 @@ def showcandidates( eventid ):
 	             	where observation.galid = master.galid order by observation.updated desc limit 1 ) as observer,
 	         ( select observation.updated
 	             from observation
-	             	where observation.galid = master.galid order by observation.updated desc limit 1 ) as updated
+	             	where observation.galid = master.galid order by observation.updated desc limit 1 ) as updated,
+	         ( select observation.filter
+	             from observation
+	             	where observation.galid = master.galid order by observation.updated desc limit 1 ) as filter,
+	         ( select observation.depth
+	             from observation
+	             	where observation.galid = master.galid order by observation.updated desc limit 1 ) as depth
 	         from ( select *
 	             from candidates
 	             where candidates.eventid == \"%s\" ) as master, galaxies
@@ -86,15 +92,25 @@ def showcandidates( eventid ):
 def showobslog( eventid ):
     conn = sqlite3.connect(path)
     cur = conn.cursor()
+#    msg = """
+#	select observation.galid, ra,dec, eventid, obsid, state, updated, filter, depth
+#	    from galaxies, observation
+#	    where observation.eventid = \"%s\" 
+#	    	and galaxies.galid=  observation.galid
+#		order by observation.updated desc
+#		;
+#	""" % ( eventid )
     msg = """
-	select * from ( 
-	select observation.galid, ra,dec, eventid, obsid, state, updated
-	    from galaxies, observation
-	    where galaxies.galid=  observation.galid
-		and observation.eventid = \"%s\" 
-		order by observation.updated desc)
+	select galid, 
+		( select galaxies.ra from galaxies where galaxies.galid = observation.galid limit 1 ) as ra,
+		( select galaxies.dec from galaxies where galaxies.galid = observation.galid limit 1 ) as dec,
+		eventid, obsid, state, updated, filter, depth
+	    from observation
+	    where observation.eventid = \"%s\" 
+		order by observation.updated desc
 		;
 	""" % ( eventid )
+
     result = [ row for row in cur.execute( msg ) ]
     result.insert(0, [ col[0] for col in cur.description ])
     conn.close()
@@ -135,14 +151,14 @@ def setignoreevent( eventid, flag, inserted, updated=None ):
     conn.commit()
     conn.close()
 
-def addobservation( galid, eventid, obsid, state, updated=None ):
+def addobservation( galid, eventid, obsid, state, filter=None, depth=None, updated=None ):
     try:
         if updated==None:
     	    updated = datetime.datetime.now()
         conn = sqlite3.connect(path)
         msg = """
-    	insert into observation values (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\" );
-    	""" % ( galid, eventid, obsid, state, updated )
+    	insert into observation values (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\" );
+    	""" % ( galid, eventid, obsid, state, updated, filter, depth )
         print  >> sys.stderr,  msg
         conn.execute(msg)
         conn.commit()

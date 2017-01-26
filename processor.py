@@ -18,7 +18,9 @@ try:
 		obsid=form.getvalue("obsid")
 		galid=form.getvalue("galid").replace(" ","+")
 		state=form.getvalue("state")
-		dbhandler.addobservation(galid,eventid,obsid,state)
+		filter=form.getvalue("filter")
+		depth=form.getvalue("depth")
+		dbhandler.addobservation(galid,eventid,obsid,state,filter,depth)
 		table=[ [ galid,eventid,obsid,state ] ]
 	elif mode.upper() == "EVENT":
 		table=dbhandler.showeventlog()
