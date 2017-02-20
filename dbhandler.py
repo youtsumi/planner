@@ -8,6 +8,18 @@ import sys
 path="./test.db"
 fs=re.compile("[\t\s]+")
 
+class myjoin:
+    def __init__(self):
+        self.arry = []
+
+    def step(self, value):
+        if value=="None":
+            return
+        self.arry.append( value )
+
+    def finalize(self):
+        return ", ".join(set(self.arry))
+
 def adapt_datetime(ts):
     return time.mktime(ts.timetuple())
 
@@ -57,6 +69,7 @@ def ingestgallist( lines,eventid ):
 
 def showcandidates( eventid ):
     conn = sqlite3.connect(path)
+    conn.create_aggregate("myjoin", 1, myjoin)
     cur = conn.cursor()
 
     msg = """
@@ -65,18 +78,18 @@ def showcandidates( eventid ):
 	         ( select observation.state
 	             from observation
 	             	where observation.galid = master.galid order by observation.updated desc limit 1 ) as state,
-	         ( select observation.obsid
+	         ( select myjoin(observation.obsid)
 	             from observation
-	             	where observation.galid = master.galid order by observation.updated desc limit 1 ) as observer,
+	             	where observation.galid = master.galid order by observation.updated desc ) as observer,
 	         ( select observation.updated
 	             from observation
 	             	where observation.galid = master.galid order by observation.updated desc limit 1 ) as updated,
-	         ( select observation.filter
+	         ( select myjoin(observation.filter||"="||observation.depth)
 	             from observation
-	             	where observation.galid = master.galid order by observation.updated desc limit 1 ) as filter,
-	         ( select observation.depth
-	             from observation
-	             	where observation.galid = master.galid order by observation.updated desc limit 1 ) as depth
+	             	where observation.galid = master.galid 
+				and observation.filter not like "None"
+				and observation.depth not like "None"
+			order by observation.updated desc ) as "filter and depth"
 	         from ( select *
 	             from candidates
 	             where candidates.eventid == \"%s\" ) as master, galaxies
