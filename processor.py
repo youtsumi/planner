@@ -20,7 +20,10 @@ try:
 		state=form.getvalue("state")
 		filter=form.getvalue("filter")
 		depth=form.getvalue("depth")
-		dbhandler.addobservation(galid,eventid,obsid,state,filter,depth)
+		obsdatetime=form.getvalue("obsdatetime")
+		observer=form.getvalue("observer")
+		hastransient=form.getvalue("hastransient")
+		dbhandler.addobservation(galid,eventid,obsid,state,filter,depth,obsdatetime,observer,hastransient)
 		table=[ [ galid,eventid,obsid,state ] ]
 	elif mode.upper() == "EVENT":
 		table=dbhandler.showeventlog()
