@@ -92,7 +92,7 @@ def showcandidates( eventid ):
 	             	where observation.galid = master.galid 
 				and observation.filter not like "None"
 				and observation.depth not like "None"
-			order by observation.updated desc ) as "filter and depth"
+			order by observation.updated desc ) as "filter and depth (5sigmaAB)"
 	         from ( select *
 	             from candidates
 	             where candidates.eventid == \"%s\" ) as master, galaxies
