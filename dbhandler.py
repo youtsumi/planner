@@ -92,7 +92,7 @@ def showcandidates( eventid ):
 	             	where observation.galid = master.galid 
 				and observation.filter not like "None"
 				and observation.depth not like "None"
-			order by observation.updated desc ) as "filter and depth (5sigmaAB)"
+			order by observation.updated desc ) as "filter and depth (5&sigma;AB)"
 	         from ( select *
 	             from candidates
 	             where candidates.eventid == \"%s\" ) as master, galaxies
@@ -169,7 +169,7 @@ def setignoreevent( eventid, flag, inserted, updated=None ):
     conn.commit()
     conn.close()
 
-def addobservation( galid, eventid, obsid, state, filter=None, depth=None, obsdatetime=None, observer=None, hastransient=None, updated=None ):
+def addobservation( galid, eventid, obsid, state, filter="N/A", depth="N/A", obsdatetime="N/A", observer="N/A", hastransient="N/A", updated=None ):
     try:
         if updated==None:
     	    updated = datetime.datetime.now()
