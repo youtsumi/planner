@@ -78,19 +78,22 @@ def showcandidates( eventid ):
 	         ( select observation.state
 	             from observation
 	             	where observation.galid = master.galid
-			and observation.eventid = \"%s\"
+				and observation.eventid = \"%s\"
 			order by observation.updated desc limit 1 ) as state,
 	         ( select myjoin(observation.obsid)
 	             from observation
 	             	where observation.galid = master.galid
+				and observation.eventid = \"%s\"
 			order by observation.updated desc ) as observer,
 	         ( select observation.updated
 	             from observation
 	             	where observation.galid = master.galid
+				and observation.eventid = \"%s\"
 			order by observation.updated desc limit 1 ) as updated,
 	         ( select myjoin(observation.filter||"="||observation.depth)
 	             from observation
 	             	where observation.galid = master.galid 
+				and observation.eventid = \"%s\"
 				and observation.filter not like "None"
 				and observation.depth not like "None"
 			order by observation.updated desc ) as "filter and depth (5&sigma;AB)"
@@ -100,7 +103,7 @@ def showcandidates( eventid ):
 	             where master.galid = galaxies.galid
                      order by master.inserted asc
 	         ) group by galid order by prob desc;
-	""" % ( eventid, eventid )
+	""" % ( eventid, eventid, eventid, eventid, eventid )
     result = [ row for row in cur.execute( msg ) ]
     result.insert(0, [ col[0] for col in cur.description ])
     conn.close()
