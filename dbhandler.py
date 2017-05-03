@@ -78,6 +78,7 @@ def showcandidates( eventid ):
 	         ( select observation.state
 	             from observation
 	             	where observation.galid = master.galid
+			and observation.eventid = \"%s\"
 			order by observation.updated desc limit 1 ) as state,
 	         ( select myjoin(observation.obsid)
 	             from observation
@@ -99,7 +100,7 @@ def showcandidates( eventid ):
 	             where master.galid = galaxies.galid
                      order by master.inserted asc
 	         ) group by galid order by prob desc;
-	""" % ( eventid )
+	""" % ( eventid, eventid )
     result = [ row for row in cur.execute( msg ) ]
     result.insert(0, [ col[0] for col in cur.description ])
     conn.close()
