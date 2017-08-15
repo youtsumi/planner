@@ -53,7 +53,11 @@ def ingestgallist( lines,eventid ):
     print  >> sys.stderr,  msg
     conn.execute(msg)
     for agalaxy in galaxies:
-	galid = agalaxy[3]
+	try:
+	    galid = agalaxy[3]
+	except:
+	    continue
+	
 	for msg in [
 	    "insert into candidates values (\"%s\", \"%s\", %e, \"%s\");"
 		% ( galid, eventid, float(agalaxy[0]), now ),
