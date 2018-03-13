@@ -36,7 +36,7 @@ def init( path ):
     with conn:
 	for sql in [
 	    "create table candidates (galid, eventid, prob, inserted datetime);",
-	    "create table galaxies (galid unique, ra, dec);",
+	    "create table galaxies (galid unique, ra, dec, dist);",
 	    "create table observation (galid, eventid, obsid, state, updated datetime, filter, depth, obsdatetime datetime, observer, hastransient );",
 	    "create table events (eventid, inserted datetime, state);",
 	    "create table observatories (obsid unique, password);"
@@ -61,8 +61,8 @@ def ingestgallist( lines,eventid ):
 	for msg in [
 	    "insert into candidates values (\"%s\", \"%s\", %e, \"%s\");"
 		% ( galid, eventid, float(agalaxy[0]), now ),
-	    "insert into galaxies values (\"%s\", %lf, %lf);"
-		% ( galid, float(agalaxy[1]), float(agalaxy[2]) ) ]:
+	    "insert or replace into galaxies values (\"%s\", %lf, %lf, %lf);"
+		% ( galid, float(agalaxy[1]), float(agalaxy[2]), float(agalaxy[4]) ) ]:
 	    print  >> sys.stderr,  msg
 	    try:
 	        conn.execute(msg)
@@ -78,7 +78,7 @@ def showcandidates( eventid ):
 
     msg = """
 	select * from ( 
-            select master.*, galaxies.ra, galaxies.dec,
+            select master.*, galaxies.ra, galaxies.dec, galaxies.dist,
 	         ( select observation.state
 	             from observation
 	             	where observation.galid = master.galid
@@ -194,12 +194,12 @@ def addobservation( galid, eventid, obsid, state, filter="N/A", depth="N/A", obs
 
 if __name__=="__main__":
     eventid="G268556"
-   # init(path)
-    for eventid in ["G270580"]:
+    init(path)
+#    for eventid in ["G270580"]:
 #    for eventid in ["G268556", "M266380","M263908","M263909","M263911","M263912","M263913"]:
-        with open("skyprob.%s.ascii" % eventid ) as f:
-            lines = f.readlines()
-            ingestgallist(lines,eventid)
+#        with open("skyprob.%s.ascii" % eventid ) as f:
+#            lines = f.readlines()
+#            ingestgallist(lines,eventid)
 #    print showcandidates(eventid)
 #    setignoreevent( "M266380", "Ignore", "2017-01-20 14:01:13.822307" )
 #    addobservation( "GL092844+590022", eventid, "HASC-HONIR", "Reserved" )
