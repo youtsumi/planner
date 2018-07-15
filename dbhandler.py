@@ -183,6 +183,18 @@ def setignoreevent( eventid, flag, inserted, updated=None ):
     conn.commit()
     conn.close()
 
+def setignoreeventifndayspassed( ndays=3 ):
+    conn = sqlite3.connect(path)
+    ndaysbefore = datetime.datetime.now()-datetime.timedelta(ndays)
+    for msg in [
+        """
+        update events set state = \"Ignore\" where eventid like  \"_______\" and inserted < \"%s\"
+        """ % ( ndaysbefore)]:
+        print msg
+        conn.execute(msg)
+    conn.commit()
+    conn.close()
+
 def addobservation( galid, eventid, obsid, state, filter="N/A", depth="N/A", obsdatetime="N/A", observer="N/A", hastransient="N/A", updated=None ):
     try:
         if updated==None:
