@@ -100,14 +100,20 @@ def showcandidates( eventid ):
 				and observation.eventid = \"%s\"
 				and observation.filter not like "None"
 				and observation.depth not like "None"
-			order by observation.updated desc ) as "filter and depth (5&sigma;AB)"
+			order by observation.updated desc ) as "filter and depth (5&sigma;AB)",
+	         ( select observation.hastransient
+	             from observation
+	             	where observation.galid = master.galid
+				and observation.eventid = \"%s\"
+				and observation.hastransient not like "None"
+			order by observation.updated desc limit 1 ) as hastransient
 	         from ( select *
 	             from candidates
 	             where candidates.eventid == \"%s\" ) as master, galaxies
 	             where master.galid = galaxies.galid
                      order by master.inserted asc
 	         ) group by galid order by prob desc;
-	""" % ( eventid, eventid, eventid, eventid, eventid )
+	""" % ( eventid, eventid, eventid, eventid, eventid, eventid )
     result = [ row for row in cur.execute( msg ) ]
     result.insert(0, [ col[0] for col in cur.description ])
     conn.close()
