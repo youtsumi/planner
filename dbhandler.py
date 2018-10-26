@@ -2,8 +2,9 @@
 import sqlite3
 import os
 import re
-import datetime
+import datetime, time
 import sys
+import pytz
 
 path="./test.db"
 fs=re.compile("[\t\s]+")
@@ -48,7 +49,7 @@ def init( path ):
 def ingestgallist( lines,eventid ):
     galaxies=map(lambda x: fs.split(x.rstrip()), lines[1:])
     conn = sqlite3.connect(path)
-    now = datetime.datetime.now()
+    now = datetime.datetime.now(pytz.utc)
     msg = "insert into events values ( \"%s\", \"%s\", null); " % ( eventid, now )
     print  >> sys.stderr,  msg
     conn.execute(msg)
@@ -164,7 +165,7 @@ def showeventlog( ):
 def setignoreevent( eventid, flag, inserted, updated=None ):
     conn = sqlite3.connect(path)
     if updated==None:
-        updated = datetime.datetime.now()
+        updated = datetime.datetime.now(pytz.utc)
     for msg in [
 #        """
 #        insert into observation
@@ -185,7 +186,7 @@ def setignoreevent( eventid, flag, inserted, updated=None ):
 
 def setignoreeventifndayspassed( ndays=3 ):
     conn = sqlite3.connect(path)
-    ndaysbefore = datetime.datetime.now()-datetime.timedelta(ndays)
+    ndaysbefore = datetime.datetime.now(pytz.utc)-datetime.timedelta(ndays)
     for msg in [
         """
         update events set state = \"Ignore\" where eventid like  \"_______\" and inserted < \"%s\"
@@ -198,7 +199,7 @@ def setignoreeventifndayspassed( ndays=3 ):
 def addobservation( galid, eventid, obsid, state, filter="N/A", depth="N/A", obsdatetime="N/A", observer="N/A", hastransient="N/A", updated=None ):
     try:
         if updated==None:
-    	    updated = datetime.datetime.now()
+    	    updated = datetime.datetime.now(pytz.utc)
         conn = sqlite3.connect(path)
         msg = """
     	insert into observation values (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\");
@@ -211,18 +212,18 @@ def addobservation( galid, eventid, obsid, state, filter="N/A", depth="N/A", obs
         print ex.reason
 
 if __name__=="__main__":
-    eventid="G268556"
-    init(path)
+    eventid="U288732"
+#    init(path)
 #    for eventid in ["G270580"]:
 #    for eventid in ["G268556", "M266380","M263908","M263909","M263911","M263912","M263913"]:
 #        with open("skyprob.%s.ascii" % eventid ) as f:
 #            lines = f.readlines()
 #            ingestgallist(lines,eventid)
-#    print showcandidates(eventid)
+    print showcandidates(eventid)
 #    setignoreevent( "M266380", "Ignore", "2017-01-20 14:01:13.822307" )
 #    addobservation( "GL092844+590022", eventid, "HASC-HONIR", "Reserved" )
 #    addobservation( "GL092844+590022", eventid, "HASC-HOWPOL", "Reserved" )
 #    addobservation( "GL100513+675234", eventid, "HASC-HOWPOL", "Reserved" )
 #    addobservation( "GL084526+524504", eventid, "HASC-HOWPOL", "Observed" )
-#    print showobslog(eventid)
+    print showobslog(eventid)
     
