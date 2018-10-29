@@ -4,7 +4,6 @@ import os
 import re
 import datetime, time
 import sys
-import pytz
 
 path="./test.db"
 fs=re.compile("[\t\s]+")
@@ -49,7 +48,7 @@ def init( path ):
 def ingestgallist( lines,eventid ):
     galaxies=map(lambda x: fs.split(x.rstrip()), lines[1:])
     conn = sqlite3.connect(path)
-    now = datetime.datetime.now(pytz.utc)
+    now = datetime.datetime.utcnow()
     msg = "insert into events values ( \"%s\", \"%s\", null); " % ( eventid, now )
     print  >> sys.stderr,  msg
     conn.execute(msg)
@@ -165,7 +164,7 @@ def showeventlog( ):
 def setignoreevent( eventid, flag, inserted, updated=None ):
     conn = sqlite3.connect(path)
     if updated==None:
-        updated = datetime.datetime.now(pytz.utc)
+        updated = datetime.datetime.utcnow()
     for msg in [
 #        """
 #        insert into observation
@@ -186,7 +185,7 @@ def setignoreevent( eventid, flag, inserted, updated=None ):
 
 def setignoreeventifndayspassed( ndays=3 ):
     conn = sqlite3.connect(path)
-    ndaysbefore = datetime.datetime.now(pytz.utc)-datetime.timedelta(ndays)
+    ndaysbefore = datetime.datetime.utcnow()-datetime.timedelta(ndays)
     for msg in [
         """
         update events set state = \"Ignore\" where eventid like  \"_______\" and inserted < \"%s\"
@@ -199,7 +198,7 @@ def setignoreeventifndayspassed( ndays=3 ):
 def addobservation( galid, eventid, obsid, state, filter="N/A", depth="N/A", obsdatetime="N/A", observer="N/A", hastransient="N/A", updated=None ):
     try:
         if updated==None:
-    	    updated = datetime.datetime.now(pytz.utc)
+    	    updated = datetime.datetime.utcnow()
         conn = sqlite3.connect(path)
         msg = """
     	insert into observation values (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\");
