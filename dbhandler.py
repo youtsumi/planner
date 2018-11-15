@@ -88,7 +88,7 @@ def showcandidates( eventid ):
 	             from observation
 	             	where observation.galid = master.galid
 				and observation.eventid = \"%s\"
-			order by observation.updated desc ) as observer,
+			order by observation.updated desc ) as obsids,
 	         ( select observation.updated
 	             from observation
 	             	where observation.galid = master.galid
