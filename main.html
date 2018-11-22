@@ -4,7 +4,7 @@
 <script type="text/javascript" src="toolkit.js"></script>
 <body onLoad="disp()">
 <h2>For engineering purpose</h2>
-<a id="event">Event list</a> | <a id="candidates">Candidates</a> | <a id="log">Observing Log</a> | <a id="admin">Admin</a> <br>
+<a id="event">Event list</a> | <a id="candidates">Candidates</a> | <a id="log">Observing Log</a> | <a id="group">Groups</a> | <a id="admin">Admin</a> <br>
 Need machine readable format like JSON output? Just replace "main.html" with "processor.py" or <a id="json">click here</a>.
 <form action="#" name="form1">
 <input type="text" name="field1" size="30"><br>
@@ -19,7 +19,7 @@ Get event list. eventid must be specified. <br>
 processor.py?mode=event&amp;eventid=G268556
 <h3>?mode=candidate</h3>
 Get candidate list. eventid must be specified. <br>
-processor.py?mode=candidate&amp;eventid=G268556
+processor.py?mode=candidate&amp;eventid=G268556[&amp;excludelist=Kanata|&amp;includelist=Kanata|&amp;obsgroup=A]
 <h3>?mode=submit</h3>
 Submit "state" string for specified galaxy.<br>
 processor.py?mode=submit&amp;eventid=G268556&amp;obsid=Kanata-HONIR&amp;galid=GL080746+224854&amp;state=Reserved&amp;filter=i&amp;depth=20.5&amp;obsdatetime=2017-02-21 12:46:40&amp;observer=Y. Utsumi&amp;hastransient=no
