@@ -1,4 +1,4 @@
-#!/subhome/hinotori.hiroshima-u.ac.jp/bin/python
+#!/usr/bin/env python
 import cgi
 import dbhandler
 import json
