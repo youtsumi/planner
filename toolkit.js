@@ -33,6 +33,7 @@ $.getJSON('processor.py' +  location.search, function(data) {
 		$('#candidates').attr('href', mainhtml+'?eventid=' + eventid + '&mode=candidate');
 		$('#log').attr('href', mainhtml+'?eventid=' + eventid + '&mode=log');
 		$('#event').attr('href', mainhtml+'?eventid=' + eventid + '&mode=event');
+		$('#group').attr('href', mainhtml+'?eventid=' + eventid + '&mode=group');
 		$('#admin').attr('href', mainhtml+'?eventid=' + eventid + '&mode=admin');
 		$('#json').attr('href', 'processor.py?'+window.location.search.substring(1));
 });
