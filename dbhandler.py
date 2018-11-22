@@ -80,19 +80,19 @@ def showcandidates( eventid, excludelist=None, includelist=None, group=None ):
 
     if excludelist is not None:
         msg = """
-    	create view subobservation as select * 
+    	create temporary view subobservation as select * 
     		from observation
     			where obsid not in ( %s )
     	""" % ( ",".join( map( lambda x: "\"%s\"" % x, excludelist ) ) )
     elif includelist is not None:
         msg = """
-    	create view subobservation as select * 
+    	create temporary view subobservation as select * 
     		from observation
     			where obsid in ( %s )
     	""" % ( ",".join( map( lambda x: "\"%s\"" % x, includelist ) ) )
     elif group is not None:
         msg = """
-    	create view subobservation as select * 
+    	create temporary view subobservation as select * 
     		from observation, obsgroups
     			where 
     			    observation.obsid = obsgroups.obsid
@@ -100,7 +100,7 @@ def showcandidates( eventid, excludelist=None, includelist=None, group=None ):
     	""" % ( ",".join( map( lambda x: "\"%s\"" % x, group ) ) )
     else:
         msg = """
-    	create view subobservation as select * 
+    	create temporary view subobservation as select * 
     		from observation
     	"""
 
@@ -135,7 +135,7 @@ def showcandidates( eventid, excludelist=None, includelist=None, group=None ):
 	             from subobservation
 	             	where subobservation.galid = master.galid
 				and subobservation.eventid = master.eventid
-				and subobservation.hastransient not like "None"
+				and subobservation.hastransient not in ( "None", "NO" )
 			order by subobservation.updated desc limit 1 ) as hastransient
 	         from ( select *
 	             from candidates
@@ -147,10 +147,6 @@ def showcandidates( eventid, excludelist=None, includelist=None, group=None ):
 	""" % ( eventid )
     result = [ row for row in cur.execute( msg ) ]
     result.insert(0, [ col[0] for col in cur.description ])
-    msg="""
-	drop view subobservation;
-	"""
-    cur.execute(msg)
     conn.close()
     return result
 
