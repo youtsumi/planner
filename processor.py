@@ -50,7 +50,6 @@ try:
 		table=dbhandler.showeventlog()
 
 except:
-	raise
 	table=dbhandler.showeventlog()
 
 print   json.dumps(table)
