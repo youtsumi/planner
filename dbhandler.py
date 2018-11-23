@@ -108,7 +108,7 @@ def showcandidates( eventid, excludelist=None, includelist=None, group=None ):
 
     msg = """
 	select * from ( 
-            select master.*,
+            select master.*, galaxies.ra, galaxies.dec, galaxies.dist,
  	         ( select subobservation.state
  	             from subobservation
  	             	where subobservation.galid = master.galid
