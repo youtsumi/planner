@@ -1,10 +1,11 @@
-#!/usr/bin/env python
+#!/subhome/hinotori.hiroshima-u.ac.jp/bin/python
 # -*- coding: utf-8 -*-
 import sqlite3
 import os
 import re
 import datetime, time
 import sys
+from dateutil.parser import parse
 
 path="./test.db"
 fs=re.compile("[\t\s]+")
@@ -76,7 +77,17 @@ def ingestgallist( lines,eventid ):
 def showcandidates( eventid, excludelist=None, includelist=None, group=None ):
     conn = sqlite3.connect(path)
     conn.create_aggregate("myjoin", 1, myjoin)
+    conn.enable_load_extension(True)
+    conn.execute("select load_extension('libsqlitefunctions')")
     cur = conn.cursor()
+
+    msg = """
+    	select inserted from events
+		where events.eventid="%s" order by inserted desc limit 1   
+    	""" % eventid
+    cur.execute(msg)
+    result = [ row for row in cur.execute( msg ) ][0][0]
+    ndays = (datetime.datetime.utcnow()-parse(result)).total_seconds()/3600/24
 
     if excludelist is not None:
         msg = """
@@ -109,6 +120,7 @@ def showcandidates( eventid, excludelist=None, includelist=None, group=None ):
     msg = """
 	select * from ( 
             select master.*, galaxies.ra, galaxies.dec, galaxies.dist,
+		round(0.7*min(%d,5)+9+5*log10(galaxies.dist),1) as Mexpected,  --- from Masaomi san's rough estimation
  	         ( select subobservation.state
  	             from subobservation
  	             	where subobservation.galid = master.galid
@@ -144,7 +156,7 @@ def showcandidates( eventid, excludelist=None, includelist=None, group=None ):
 	             where master.galid = galaxies.galid
                      order by  master.inserted asc
 	         ) group by galid order by prob desc;
-	""" % ( eventid )
+	""" % ( ndays, eventid )
     result = [ row for row in cur.execute( msg ) ]
     result.insert(0, [ col[0] for col in cur.description ])
     conn.close()
