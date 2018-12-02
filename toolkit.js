@@ -2,6 +2,8 @@ if (! location.search.match(/\beventid=/)) {
 	location.search = '?eventid=Click one "eventid" from "Event list"';
 }
 
+
+
 $.getJSON('processor.py' +  location.search, function(data) {
 		var ary = data;
 		var wak = "";
@@ -45,6 +47,12 @@ $.getJSON('processor.py' +  location.search, function(data) {
 		$('#group').attr('href', mainhtml+'?eventid=' + eventid + '&mode=group');
 		$('#admin').attr('href', mainhtml+'?eventid=' + eventid + '&mode=admin');
 		$('#json').attr('href', 'processor.py?'+window.location.search.substring(1));
+		console.log(location.href);
+		if (location.href.match(/playground/)) {
+			$('#headh2').text("For engineering purpose")
+		} else {
+			$('#headh2').text("For normal operation")
+		}
 });
 
 $(document).on('click', 'td', function() {
