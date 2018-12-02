@@ -7,6 +7,7 @@ import re
 import os
 import sys
 import datetime
+import glob
 
 def ingest( path ):
 	if os.path.exists(path) is not True:
@@ -32,5 +33,5 @@ def ingest( path ):
 pathtodir=sys.argv[1]
 print pathtodir, os.listdir(pathtodir)
 
-for apath in filter(lambda x: True if re.search("^skyprob\.", x) is not None else False, os.listdir(pathtodir)):
+for apath in glob.glob(pathtodir+"/skyprob*"):
 	ingest(pathtodir+"/"+apath)
