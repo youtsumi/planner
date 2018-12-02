@@ -50,6 +50,7 @@ $.getJSON('processor.py' +  location.search, function(data) {
 		console.log(location.href);
 		if (location.href.match(/playground/)) {
 			$('#headh2').text("For engineering purpose")
+			$('#headh2').attr("id","redcell")
 		} else {
 			$('#headh2').text("For normal operation")
 		}
