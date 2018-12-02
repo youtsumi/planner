@@ -120,7 +120,8 @@ def showcandidates( eventid, excludelist=None, includelist=None, group=None ):
     msg = """
 	select * from ( 
             select master.*, galaxies.ra, galaxies.dec, galaxies.dist,
-		round(0.7*min(%d,5)+9+5*log10(galaxies.dist),1) as Mexpected,  --- from Masaomi san's rough estimation
+		round(0.7*min(%d,5)+9+5*log10(galaxies.dist),1) as OptExpected,  --- from Masaomi san's rough estimation
+		round(10+5*log10(galaxies.dist),1) as NirExpected,  --- from Utsumi 's rough estimation
  	         ( select subobservation.state
  	             from subobservation
  	             	where subobservation.galid = master.galid
@@ -208,8 +209,12 @@ def showobsgroup( ):
     conn = sqlite3.connect(path)
     cur = conn.cursor()
     msg = """
-	select *
-	    from obsgroups
+	select reported.obsid as obsid,
+		( select obsgroups.obsgroup
+		from obsgroups
+		where obsgroups.obsid=reported.obsid ) as obsgroup 
+	from ( select obsid
+		from observation group by obsid order by obsid ) as reported;
 	"""
     result = [ row for row in cur.execute( msg ) ]
     result.insert(0, [ col[0] for col in cur.description ])
