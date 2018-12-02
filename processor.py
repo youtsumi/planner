@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/subhome/hinotori.hiroshima-u.ac.jp/bin/python
 import cgi
 import dbhandler
 import json
@@ -27,8 +27,19 @@ try:
 		table=[ [ galid,eventid,obsid,state ] ]
 	elif mode.upper() == "EVENT":
 		table=dbhandler.showeventlog()
+	elif mode.upper() == "GROUP":
+		table=dbhandler.showobsgroup()
 	elif mode.upper() == "CANDIDATE":
-		table=dbhandler.showcandidates(eventid)
+		excludelist = form.getlist("excludelist")
+		if len(excludelist)==0:
+			excludelist=None
+		includelist = form.getlist("includelist")
+		if len(includelist)==0:
+			includelist=None
+		group=form.getlist("obsgroup")
+		if len(group)==0:
+			group=None
+		table=dbhandler.showcandidates(eventid,excludelist=excludelist,includelist=includelist,group=group)
 	elif mode.upper() == "ADMIN":
 		state=form.getvalue("state")
 		inserted=urllib.unquote(form.getvalue("inserted"))
@@ -42,3 +53,4 @@ except:
 	table=dbhandler.showeventlog()
 
 print   json.dumps(table)
+#print form.getlist("includelist")

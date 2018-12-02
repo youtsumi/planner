@@ -6,26 +6,35 @@ $.getJSON('processor.py' +  location.search, function(data) {
 		var ary = data;
 		var wak = "";
 		for (i = 0; i < ary.length; i++) {
-		wak += "<tr>";
-		for (j = 0; j < ary[i].length; j++) {
-		wak += "<td>" + ary[i][j] + "</td>";
-		}
-		wak += "</tr>";
+			var tmp ="";
+			var option ="";
+			for (j = 0; j < ary[i].length; j++) {
+				var item = ary[i][j];
+				if (item==null) {
+					item="";
+				}
+				tmp += "<td>" + item + "</td>";
+			}
+			if (tmp.match(/YES/i) ){
+				tmp = tmp.replace(/td/gi,"td id=redcell");
+				console.log(tmp);
+			}
+			wak += "<tr>" + tmp + "</tr>";
 		}
 		$("#listbox").append('<table>' + wak + '</table>');
 		var getUrlParameter = function getUrlParameter(sParam) {
-		var sPageURL = decodeURIComponent(window.location.search.substring(1)),
-		sURLVariables = sPageURL.split('&'),
-		sParameterName,
-		i;
+			var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+			sURLVariables = sPageURL.split('&'),
+			sParameterName,
+			i;
 
-		for (i = 0; i < sURLVariables.length; i++) {
-		sParameterName = sURLVariables[i].split('=');
+			for (i = 0; i < sURLVariables.length; i++) {
+			sParameterName = sURLVariables[i].split('=');
 
-		if (sParameterName[0] === sParam) {
-			return sParameterName[1] === undefined ? true : sParameterName[1];
-		}
-		}
+				if (sParameterName[0] === sParam) {
+					return sParameterName[1] === undefined ? true : sParameterName[1];
+				}
+			}
 		};
 		var eventid = getUrlParameter('eventid');
 		var mainhtml = "main.html";
@@ -33,6 +42,7 @@ $.getJSON('processor.py' +  location.search, function(data) {
 		$('#candidates').attr('href', mainhtml+'?eventid=' + eventid + '&mode=candidate');
 		$('#log').attr('href', mainhtml+'?eventid=' + eventid + '&mode=log');
 		$('#event').attr('href', mainhtml+'?eventid=' + eventid + '&mode=event');
+		$('#group').attr('href', mainhtml+'?eventid=' + eventid + '&mode=group');
 		$('#admin').attr('href', mainhtml+'?eventid=' + eventid + '&mode=admin');
 		$('#json').attr('href', 'processor.py?'+window.location.search.substring(1));
 });
