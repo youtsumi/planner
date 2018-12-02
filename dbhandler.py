@@ -166,14 +166,6 @@ def showcandidates( eventid, excludelist=None, includelist=None, group=None ):
 def showobslog( eventid ):
     conn = sqlite3.connect(path)
     cur = conn.cursor()
-#    msg = """
-#	select observation.galid, ra,dec, eventid, obsid, state, updated, filter, depth
-#	    from galaxies, observation
-#	    where observation.eventid = \"%s\" 
-#	    	and galaxies.galid=  observation.galid
-#		order by observation.updated desc
-#		;
-#	""" % ( eventid )
     msg = """
 	select galid, 
 		( select galaxies.ra from galaxies
@@ -226,19 +218,9 @@ def setignoreevent( eventid, flag, inserted, updated=None ):
     if updated==None:
         updated = datetime.datetime.utcnow()
     for msg in [
-#        """
-#        insert into observation
-#            select  galid, \"%s\", "admin", \"%s\", \"%s\"
-#                from ( 
-#                    select galid,eventid
-#                        from candidates
-#				where candidates.eventid = \"%s\"
-#				and candidates.inserted = \"%s\"  );
-#	""" % ( eventid, flag, updated, eventid, inserted ),
         """
         update events set state = \"%s\" where eventid = \"%s\" and inserted = \"%s\"
         """ % ( flag, eventid, inserted )]:
-#    print msg
         conn.execute(msg)
     conn.commit()
     conn.close()
