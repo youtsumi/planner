@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""
+This script ingests a galaxy list into the database.
+"""
 #### INVOKED BY CRON
 #### HOME=/subhome/hinotori.hiroshima-u.ac.jp
 #### * * * * * ( cd ${HOME}/public_html/GW/planner/ && ${HOME}/bin/python ingetst.py ./ >> ./cronlog )

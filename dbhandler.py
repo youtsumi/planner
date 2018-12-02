@@ -1,5 +1,8 @@
 #!/subhome/hinotori.hiroshima-u.ac.jp/bin/python
 # -*- coding: utf-8 -*-
+"""
+This script contains core routines to enable the planner system
+"""
 import sqlite3
 import os
 import re
