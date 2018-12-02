@@ -1,9 +1,9 @@
-- Compile sqlite with
+- Compile sqlite3 with
     ```
     $ ./configure --prefix=/subhome/hinotori.hiroshima-u.ac.jp --enable-load-extension
     ```
 
-- Compile an extension library
+- Compile an extension library for sqlite3 and place it appropriately
     ```
     gcc -fPIC -shared -lm -I .  -o libsqlitefunctions.so extension-functions.c     
     ```
@@ -13,5 +13,3 @@
     # Comment this out if you want the sqlite3 module to be able to load extensions.
     sqlite_defines.append(("SQLITE_OMIT_LOAD_EXTENSION", "1"))
     ```
-
-
