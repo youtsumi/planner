@@ -206,7 +206,8 @@ def showobsgroup( ):
 		from obsgroups
 		where obsgroups.obsid=reported.obsid ) as obsgroup 
 	from ( select obsid
-		from observation group by obsid order by obsid ) as reported;
+		from observation
+		group by obsid order by obsid ) as reported;
 	"""
     result = [ row for row in cur.execute( msg ) ]
     result.insert(0, [ col[0] for col in cur.description ])
