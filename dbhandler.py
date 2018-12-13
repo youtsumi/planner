@@ -151,7 +151,7 @@ def showcandidates( eventid, excludelist=None, includelist=None, group=None ):
 	             from subobservation
 	             	where subobservation.galid = master.galid
 				and subobservation.eventid = master.eventid
-				and subobservation.hastransient not in ( "None", "NO" )
+				and subobservation.hastransient not in ( "None" )
 			order by subobservation.updated desc limit 1 ) as hastransient
 	         from ( select *
 	             from candidates
