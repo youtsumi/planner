@@ -1,4 +1,7 @@
 #!/subhome/hinotori.hiroshima-u.ac.jp/bin/python
+"""
+This is a helper script to handling CGI
+"""
 import cgi
 import dbhandler
 import json

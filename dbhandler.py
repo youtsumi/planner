@@ -1,5 +1,8 @@
 #!/subhome/hinotori.hiroshima-u.ac.jp/bin/python
 # -*- coding: utf-8 -*-
+"""
+This script contains core routines to enable the planner system
+"""
 import sqlite3
 import os
 import re
@@ -148,7 +151,7 @@ def showcandidates( eventid, excludelist=None, includelist=None, group=None ):
 	             from subobservation
 	             	where subobservation.galid = master.galid
 				and subobservation.eventid = master.eventid
-				and subobservation.hastransient not in ( "None", "NO" )
+				and subobservation.hastransient not in ( "None" )
 			order by subobservation.updated desc limit 1 ) as hastransient
 	         from ( select *
 	             from candidates
