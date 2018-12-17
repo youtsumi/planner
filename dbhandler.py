@@ -234,7 +234,7 @@ def setignoreeventifndayspassed( ndays=3 ):
     ndaysbefore = datetime.datetime.utcnow()-datetime.timedelta(ndays)
     for msg in [
         """
-        update events set state = \"Ignore\" where eventid like  \"_______\" and inserted < \"%s\"
+        update events set state = \"Ignore\" where inserted < \"%s\"
         """ % ( ndaysbefore)]:
         print msg
         conn.execute(msg)
