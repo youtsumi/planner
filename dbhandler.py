@@ -213,12 +213,12 @@ def showstat( ):
 		select 
 			obsid,
 			filter,
-			avg(depth),
-			median(depth),
-			mode(depth),
-			stdev(depth),
-			max(depth),
-			min(depth),
+			printf("%.1f", avg(depth)) as mean,
+			printf("%.1f", median(depth)) as median,
+			printf("%.1f", mode(depth)) as mode,
+			printf("%.1f", stdev(depth)) as stdev,
+			printf("%.1f", max(depth)) as max,
+			printf("%.1f", min(depth)) as min,
 			count(depth) as N
 		from observation
 		where
