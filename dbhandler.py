@@ -169,6 +169,9 @@ def showcandidates( eventid, excludelist=None, includelist=None, group=None ):
 def showobslog( eventid ):
     conn = sqlite3.connect(path)
     cur = conn.cursor()
+    whereclause = ""
+    if eventid!="all":
+       whereclause = "where observation.eventid = \"%s\" " % ( eventid )
     msg = """
 	select galid, 
 		( select galaxies.ra from galaxies
@@ -177,10 +180,10 @@ def showobslog( eventid ):
 			where galaxies.galid = observation.galid limit 1 ) as dec,
 		eventid, obsid, state, updated, filter, depth, obsdatetime, observer, hastransient
 	    from observation
-	    where observation.eventid = \"%s\" 
-		order by observation.updated desc
+	    %s
+            order by observation.updated desc
 		;
-	""" % ( eventid )
+	""" % ( whereclause )
 
     result = [ row for row in cur.execute( msg ) ]
     result.insert(0, [ col[0] for col in cur.description ])
@@ -200,6 +203,36 @@ def showeventlog( ):
     conn.close()
     return result
 
+def showstat( ):
+    conn = sqlite3.connect(path)
+    conn.enable_load_extension(True)
+    conn.execute("select load_extension('libsqlitefunctions')")
+    cur = conn.cursor()
+    msg = """
+	select * from (
+		select 
+			obsid,
+			filter,
+			avg(depth),
+			median(depth),
+			mode(depth),
+			stdev(depth),
+			max(depth),
+			min(depth),
+			count(depth) as N
+		from observation
+		where
+			depth != "None" and
+			depth<"25"
+		group by obsid, filter )
+	where
+		N > 5
+	"""
+    result = [ row for row in cur.execute( msg ) ]
+    result.insert(0, [ col[0] for col in cur.description ])
+    conn.close()
+    return result
+
 def showobsgroup( ):
     conn = sqlite3.connect(path)
     cur = conn.cursor()
@@ -209,7 +242,8 @@ def showobsgroup( ):
 		from obsgroups
 		where obsgroups.obsid=reported.obsid ) as obsgroup 
 	from ( select obsid
-		from observation group by obsid order by obsid ) as reported;
+		from observation
+		group by obsid order by obsid ) as reported;
 	"""
     result = [ row for row in cur.execute( msg ) ]
     result.insert(0, [ col[0] for col in cur.description ])
@@ -233,7 +267,7 @@ def setignoreeventifndayspassed( ndays=3 ):
     ndaysbefore = datetime.datetime.utcnow()-datetime.timedelta(ndays)
     for msg in [
         """
-        update events set state = \"Ignore\" where eventid like  \"_______\" and inserted < \"%s\"
+        update events set state = \"Ignore\" where inserted < \"%s\"
         """ % ( ndaysbefore)]:
         print msg
         conn.execute(msg)
@@ -263,11 +297,12 @@ if __name__=="__main__":
 #        with open("skyprob.%s.ascii" % eventid ) as f:
 #            lines = f.readlines()
 #            ingestgallist(lines,eventid)
-    print showcandidates(eventid,group=["A"])
+#    print showcandidates(eventid,group=["A"])
+#    print showstat()
 #    setignoreevent( "M266380", "Ignore", "2017-01-20 14:01:13.822307" )
 #    addobservation( "GL092844+590022", eventid, "HASC-HONIR", "Reserved" )
 #    addobservation( "GL092844+590022", eventid, "HASC-HOWPOL", "Reserved" )
 #    addobservation( "GL100513+675234", eventid, "HASC-HOWPOL", "Reserved" )
 #    addobservation( "GL084526+524504", eventid, "HASC-HOWPOL", "Observed" )
-#    print showobslog(eventid)
+    print showobslog(eventid)
     

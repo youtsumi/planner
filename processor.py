@@ -17,6 +17,8 @@ try:
 	eventid=form.getvalue("eventid")
 	if mode.upper() == "LOG":
 		table=dbhandler.showobslog(eventid)
+	elif mode.upper() == "STAT":
+		table=dbhandler.showstat()
 	elif mode.upper() == "SUBMIT":
 		obsid=form.getvalue("obsid")
 		galid=form.getvalue("galid").replace(" ","+")
@@ -49,6 +51,7 @@ try:
 		if state == "Ignore":
 			dbhandler.setignoreevent(eventid,state,inserted)
 		table=dbhandler.showeventlog()
+
 	else:
 		table=dbhandler.showeventlog()
 
