@@ -19,6 +19,8 @@ try:
 		table=dbhandler.showobslog(eventid)
 	elif mode.upper() == "STAT":
 		table=dbhandler.showstat()
+	elif mode.upper() == "TRANSIENTS":
+		table=dbhandler.showtransients()
 	elif mode.upper() == "SUBMIT":
 		obsid=form.getvalue("obsid")
 		galid=form.getvalue("galid").replace(" ","+")

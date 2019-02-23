@@ -43,7 +43,8 @@ $.getJSON('processor.py' +  location.search, function(data) {
 		$('#normalh2').text(getUrlParameter('mode')+' : '+eventid);
 		$('#candidates').attr('href', mainhtml+'?eventid=' + eventid + '&mode=candidate');
 		$('#log').attr('href', mainhtml+'?eventid=' + eventid + '&mode=log');
-		$('#logall').attr('href', mainhtml+'?eventid=all&mode=log');
+		$('#logall').attr('href', mainhtml+'?eventid=depth&mode=log');
+		$('#transients').attr('href', mainhtml+'?eventid=transients&mode=transients');
 		$('#event').attr('href', mainhtml+'?eventid=' + eventid + '&mode=event');
 		$('#group').attr('href', mainhtml+'?eventid=' + eventid + '&mode=group');
 		$('#stat').attr('href', mainhtml+'?eventid=' + eventid + '&mode=stat');

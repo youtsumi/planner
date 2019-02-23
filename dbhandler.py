@@ -203,6 +203,21 @@ def showeventlog( ):
     conn.close()
     return result
 
+def showtransients( ):
+    conn = sqlite3.connect(path)
+    cur = conn.cursor()
+    msg = """
+	select *
+	from
+		observation
+	where hastransient not in  ( "None" , "no", "NO", "--")
+	order by updated desc;
+	"""
+    result = [ row for row in cur.execute( msg ) ]
+    result.insert(0, [ col[0] for col in cur.description ])
+    conn.close()
+    return result
+
 def showstat( ):
     conn = sqlite3.connect(path)
     conn.enable_load_extension(True)
@@ -305,5 +320,5 @@ if __name__=="__main__":
 #    addobservation( "GL092844+590022", eventid, "HASC-HOWPOL", "Reserved" )
 #    addobservation( "GL100513+675234", eventid, "HASC-HOWPOL", "Reserved" )
 #    addobservation( "GL084526+524504", eventid, "HASC-HOWPOL", "Observed" )
-    print showobslog(eventid)
+    print showtransients()
     
