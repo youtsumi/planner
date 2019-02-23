@@ -207,11 +207,26 @@ def showtransients( ):
     conn = sqlite3.connect(path)
     cur = conn.cursor()
     msg = """
-	select *
+	select 
+		galaxies.galid,
+		galaxies.ra,
+		galaxies.dec,
+		galaxies.dist,
+		observation.eventid,
+		observation.obsid,
+		observation.state,
+		observation.updated,
+		observation.filter,
+		observation.depth,
+		observation.obsdatetime,
+		observation.observer,
+		observation.hastransient
 	from
-		observation
-	where hastransient not in  ( "None" , "no", "NO", "--")
-	order by updated desc;
+		galaxies, observation
+	where
+		observation.hastransient not in  ( "None" , "no", "NO", "--") and
+		observation.galid = galaxies.galid
+	order by observation.updated desc;
 	"""
     result = [ row for row in cur.execute( msg ) ]
     result.insert(0, [ col[0] for col in cur.description ])
