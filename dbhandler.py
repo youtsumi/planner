@@ -223,7 +223,8 @@ def showstat( ):
 		from observation
 		where
 			depth != "None" and
-			depth<"25"
+			cast( depth as float)>0 and
+			cast( depth as float)<25
 		group by obsid, filter )
 	where
 		N > 5
