@@ -208,25 +208,36 @@ def showtransients( ):
     cur = conn.cursor()
     msg = """
 	select 
-		galaxies.galid,
-		galaxies.ra,
-		galaxies.dec,
-		galaxies.dist,
-		observation.eventid,
-		observation.obsid,
-		observation.state,
-		observation.updated,
-		observation.filter,
-		observation.depth,
-		observation.obsdatetime,
-		observation.observer,
-		observation.hastransient
+		galid,
+		( select ra
+		from galaxies
+		where
+			galaxies.galid = observation.galid
+		) as ra,
+		( select dec
+		from galaxies
+		where
+			galaxies.galid = observation.galid
+		) as dec,
+		( select dist 
+		from galaxies
+		where
+			galaxies.galid = observation.galid
+		) as dist,
+		eventid,
+		obsid,
+		state,
+		updated,
+		filter,
+		depth,
+		obsdatetime,
+		observer,
+		hastransient
 	from
-		galaxies, observation
+		observation
 	where
-		observation.hastransient not in  ( "None" , "no", "NO", "--") and
-		observation.galid = galaxies.galid
-	order by observation.updated desc;
+		hastransient not in  ( "None" , "no", "NO", "--")
+	order by updated desc;
 	"""
     result = [ row for row in cur.execute( msg ) ]
     result.insert(0, [ col[0] for col in cur.description ])
