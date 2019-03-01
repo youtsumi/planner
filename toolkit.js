@@ -57,7 +57,9 @@ $.getJSON('processor.py' +  location.search, function(data) {
 		} else {
 			$('#headh2').text("For normal operation")
 		}
-		$("#probmap").append("<a href=https://gracedb.ligo.org/superevents/"+eventid+"/view/><img src=https://gracedb.ligo.org/api/superevents/"+eventid+"/files/bayestar.png></a>")
+		$("#probmap").attr("href","https://gracedb.ligo.org/superevents/"+eventid+"/view/")
+		$("#probmap").append("<img src=https://gracedb.ligo.org/api/superevents/"+eventid+"/files/bayestar.png height=300>")
+		$("#probmap").append("<img src=https://gracedb.ligo.org/api/superevents/"+eventid+"/files/bayestar.volume.png height=300>")
 });
 
 $(document).on('click', 'td', function() {
