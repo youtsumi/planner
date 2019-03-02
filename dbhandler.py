@@ -292,14 +292,16 @@ def showobsgroup( ):
     conn.close()
     return result
 
-def setignoreevent( eventid, flag, inserted, updated=None ):
+def setignoreevent( eventid, flag, inserted=None, updated=None ):
     conn = sqlite3.connect(path)
     if updated==None:
         updated = datetime.datetime.utcnow()
     for msg in [
         """
-        update events set state = \"%s\" where eventid = \"%s\" and inserted = \"%s\"
-        """ % ( flag, eventid, inserted )]:
+        update events set state = \"%s\" where eventid = \"%s\"
+        """ % ( flag, eventid )]:
+        if inserted != None:
+            msg = msg + " and inserted = \"%s\"" % ( inserted )
         conn.execute(msg)
     conn.commit()
     conn.close()
