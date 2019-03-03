@@ -49,7 +49,10 @@ try:
 		table=dbhandler.showcandidates(eventid,excludelist=excludelist,includelist=includelist,group=group)
 	elif mode.upper() == "ADMIN":
 		state=form.getvalue("state")
-		inserted=urllib.unquote(form.getvalue("inserted"))
+		try:
+			inserted=urllib.unquote(form.getvalue("inserted"))
+		except:
+			inserted=None
 		if state == "Ignore":
 			dbhandler.setignoreevent(eventid,state,inserted)
 		table=dbhandler.showeventlog()
